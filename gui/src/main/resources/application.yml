@@ -1,5 +1,16 @@
+
 server:
-  port: 9000
+  port: 9443
+  ssl:
+    key-store: classpath:keystore/si.jks  #alternativ gui/src/main/resources/keystore/si.p12(.jks)
+    key-store-type: jks
+    key-store-password: password
+    key-alias: ssl
+    enabled: true
+
+security:
+  basic:
+    enabled: false
 
 management:
   server:
