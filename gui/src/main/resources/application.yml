@@ -38,3 +38,7 @@ spring:
         url: http://localhost:8080
         username: user
         password: password
+
+logging:
+  file:
+    name: logfile.txt
