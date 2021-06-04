@@ -3,6 +3,7 @@ package de.sranko_informatik.si_excel_to_json_jar_gui;
 import de.sranko_informatik.si_excel_to_json_jar_core.FileService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,12 @@ import java.io.IOException;
 
 @Controller
 public class GuiController {
+
+    @Value("${client.ssl.trust-store}")
+    private String trustStore;
+
+    @Value("${client.ssl.trust-store-password}")
+    private String trustStorePassword;
 
     FileService fileService;
 
@@ -43,7 +50,7 @@ public class GuiController {
         try {
             callbackData = fileService.parseFile(file);
             System.out.println(callbackData.toString());
-            response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl);
+            response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
             msg = String.format("File %s (%s) wurde erfolgreich bearbeitet. %s, %s", fileService.getName(), fileService.getHumanReadableSize(), callbackUrl, clientInfo);
 
         } catch (IOException e) {

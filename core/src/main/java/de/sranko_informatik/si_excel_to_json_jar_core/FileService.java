@@ -86,7 +86,7 @@ public class FileService {
         return ExcelParser.getJSONObject(file);
     }
 
-    public String sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl) throws IOException {
+    public String sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl, String trustStore, String password) throws IOException {
 
         JSONObject payload = new JSONObject()
                 .put("callbackData", callbackData)
@@ -101,7 +101,7 @@ public class FileService {
 
             //RestTemplate restTemplate = getRestTemplate1();
             //RestTemplate restTemplate = getRestTemplate2();
-            RestTemplate restTemplate = getRestTemplate3();
+            RestTemplate restTemplate = getRestTemplate3(trustStore, password);
             ResponseEntity<String> response = restTemplate.exchange(callbackUrl, HttpMethod.POST, entity, String.class);
 
             //String result = restTemplate.postForObject(callbackUrl, entity, String.class);
@@ -182,7 +182,7 @@ public class FileService {
 
     }
 
-    private RestTemplate getRestTemplate3() {
+    private RestTemplate getRestTemplate3(String trustStore, String password) {
         try {
 
             //String keyStore = env.getProperty("server.ssl.key-store");
@@ -191,8 +191,8 @@ public class FileService {
             SSLContext sslContext = SSLContexts.custom()
 
                     .loadTrustMaterial(
-                            ResourceUtils.getFile("classpath:keystore/truststore.ts"),
-                            "password".toCharArray())
+                            ResourceUtils.getFile(trustStore),
+                            password.toCharArray())
                     .build();
 
             CloseableHttpClient httpClient = HttpClients.custom()

@@ -7,6 +7,9 @@ server:
     key-store-password: password
     key-alias: ssl
     enabled: true
+
+client:
+  ssl:
     trust-store: classpath:keystore/truststore.ts
     trust-store-password: password
     trust-store-type: jks

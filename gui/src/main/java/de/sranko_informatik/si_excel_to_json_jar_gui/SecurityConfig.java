@@ -13,8 +13,8 @@ import javax.annotation.PostConstruct;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private Environment env;
+//    @Autowired
+//    private Environment env;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -22,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
     }
 
+/*
     @PostConstruct
     private void configureSSL() {
         System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
@@ -31,4 +32,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         System.setProperty("javax.net.ssl.trustStoreType",env.getProperty("server.ssl.trust-store-type"));
         System.out.println("\"javax.net.ssl.trustStoreType\":".concat(System.getProperty("javax.net.ssl.trustStoreType")));
     }
+ */
 }
