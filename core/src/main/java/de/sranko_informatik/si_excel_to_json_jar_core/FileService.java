@@ -97,7 +97,7 @@ public class FileService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            HttpEntity<String> entity = new HttpEntity<String>(payload.toString(), headers);
 
             //RestTemplate restTemplate = getRestTemplate1();
             //RestTemplate restTemplate = getRestTemplate2();
