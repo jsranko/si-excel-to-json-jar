@@ -9,6 +9,7 @@ server:
     enabled: true
     trust-store: classpath:keystore/truststore.ts
     trust-store-password: password
+    trust-store-type: jks
 
 security:
   basic:

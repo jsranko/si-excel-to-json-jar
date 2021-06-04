@@ -25,6 +25,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @PostConstruct
     private void configureSSL() {
         System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
+        System.out.println("\"javax.net.ssl.trustStore\":".concat(System.getProperty("javax.net.ssl.trustStore")));
         System.setProperty("javax.net.ssl.trustStorePassword",env.getProperty("server.ssl.trust-store-password"));
+        System.out.println("\"javax.net.ssl.trustStorePassword\":".concat(System.getProperty("javax.net.ssl.trustStorePassword")));
+        System.setProperty("javax.net.ssl.trustStoreType",env.getProperty("server.ssl.trust-store-type"));
+        System.out.println("\"javax.net.ssl.trustStoreType\":".concat(System.getProperty("javax.net.ssl.trustStoreType")));
     }
 }
