@@ -8,6 +8,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -88,9 +90,13 @@ public class FileService {
 
     public String sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl, String trustStore, String password) throws IOException {
 
+        Logger logger = LoggerFactory.getLogger(ExcelParser.class);
+
         JSONObject payload = new JSONObject()
                 .put("callbackData", callbackData)
                 .put("clientInfo", clientInfo);
+
+        logger.debug(String.format("Payload erstellt: %s,", payload.toString()));
 
         try {
 
@@ -102,9 +108,12 @@ public class FileService {
             //RestTemplate restTemplate = getRestTemplate1();
             //RestTemplate restTemplate = getRestTemplate2();
             RestTemplate restTemplate = getRestTemplate3(trustStore, password);
+
+            logger.debug(String.format("Payload wird an %s übermittelt.", callbackUrl.toString()));
+
             ResponseEntity<String> response = restTemplate.exchange(callbackUrl, HttpMethod.POST, entity, String.class);
 
-            //String result = restTemplate.postForObject(callbackUrl, entity, String.class);
+            logger.debug(String.format("Response erhalten: %s", response.toString()));
 
             return response.getBody();
 

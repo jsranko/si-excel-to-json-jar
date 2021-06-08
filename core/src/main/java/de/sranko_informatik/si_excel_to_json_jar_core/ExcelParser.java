@@ -6,6 +6,8 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,8 +19,11 @@ public class ExcelParser {
 
     public static JSONObject getJSONObject(MultipartFile file) throws IOException{
 
+        Logger logger = LoggerFactory.getLogger(ExcelParser.class);
+
         //Create an object of FileInputStream class to read excel file
         InputStream inputStream = file.getInputStream();
+        logger.debug(String.format("Datei %s (%s bytes) wird bearbeitet., ", file.getOriginalFilename(), file.getSize()));
 
         Workbook workbook = null;
 
@@ -31,6 +36,7 @@ public class ExcelParser {
 
             //If it is xlsx file then create object of XSSFWorkbook class
             workbook = new XSSFWorkbook(inputStream);
+            logger.debug(String.format("XSSFWorkbook erstellt, weil %s Extension ermittelt.", fileExtensionName));
 
         }
 
@@ -39,18 +45,21 @@ public class ExcelParser {
 
             //If it is xls file then create object of HSSFWorkbook class
             workbook = new HSSFWorkbook(inputStream);
+            logger.debug(String.format("HSSFWorkbook erstellt, weil %s Extension ermittelt.", fileExtensionName));
 
         }
+
+        logger.debug(String.format("%s Sheets werden bearbeitet.", workbook.getNumberOfSheets()));
 
         JSONObject workbookJSON = new JSONObject();
 
         //Create a root json object
         for (int s = 0; s < workbook.getNumberOfSheets(); s++){
 
-            //List<List<String>> sheetList = new ArrayList<List<String>>();
-
             //Read sheet inside the workbook by index
             Sheet sheet = workbook.getSheetAt(s);
+
+            logger.debug(String.format("Sheet: %s wird bearbeitet.", sheet.getSheetName()));
 
             List<ExcelColumn> rowList;
             JSONArray sheetList = new JSONArray();
@@ -67,15 +76,14 @@ public class ExcelParser {
 
                 if (isTableHead(workbook, row.getCell(0))) {
                     headerList = getTableColumns(row);
+                    logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
                 } else {
                     List<ExcelColumn> rowColumnsList = getRowColumns(row);
                     JSONObject jsonRow = new JSONObject();
                     int index = 0;
                     for (ExcelColumn column: rowColumnsList) {
                         jsonRow.put(headerList.get(index) ,column.getValue());
-//                        switch (column.getDataType()){
-//                            case CHAR, VARCHAR, NUMBER -> jsonRow.put(headerList.get(index) ,column.getValue());
-//                        }
+                        logger.debug(String.format("Zeile %s erstellt: %s", index, jsonRow.toString()));
                         index += 1;
                     }
                     sheetList.put(jsonRow);
@@ -88,12 +96,16 @@ public class ExcelParser {
             workbookJSON.append("sheets", sheetJSON);
             workbookJSON.put("name", file.getOriginalFilename());
 
+            logger.debug(String.format("Sheet %s ist fertig. %s", sheet.getSheetName(), sheetJSON.toString()));
         }
 
         return workbookJSON;
     }
 
     public static boolean isTableHead (Workbook book, Cell cell) {
+        if (cell == null) {
+            return false;
+        }
         CellStyle style = cell.getCellStyle();
         Font font = book.getFontAt(style.getFontIndex());
         if (font.getBold()) {
@@ -137,6 +149,10 @@ public class ExcelParser {
 
             //Print Excel data in console
             Cell cell = row.getCell(c);
+            if (cell == null) {
+                output.add(new ExcelColumn(ColumnType.CHAR, null, ""));
+                continue;
+            }
             CellType cellType = cell.getCellType();
             if (cellType == CellType.FORMULA) {
                 cellType = cell.getCachedFormulaResultType();

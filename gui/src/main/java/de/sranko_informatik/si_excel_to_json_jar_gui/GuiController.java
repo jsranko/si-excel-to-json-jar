@@ -51,11 +51,12 @@ public class GuiController {
             callbackData = fileService.parseFile(file);
             System.out.println(callbackData.toString());
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
-            msg = String.format("File %s (%s) wurde erfolgreich bearbeitet. %s, %s", fileService.getName(), fileService.getHumanReadableSize(), callbackUrl, clientInfo);
+            msg = "Import wurde erfolgreich durchgeführt.";
 
         } catch (IOException e) {
             e.printStackTrace();
-            msg = String.format("Daten könnten nicht versendete werden: %s", e.toString());
+            msg = "Daten könnten nicht versendete werden.";
+            response = e.toString();
 
         }
 
