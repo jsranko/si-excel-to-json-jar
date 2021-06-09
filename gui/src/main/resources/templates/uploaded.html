@@ -25,10 +25,10 @@
 <div class="container">
     <div id="status_area">
         <h2 th:text="${status} + ': ' + ${messageText}">Error: Bla bla bla bla bla</h2>
-        <div th:switch="${status}">
+        <span th:switch="${status}">
             <span th:case="'Error'">Schließen Sie bitte das Fenster und wiederholen Sie den Import</span>
             <span th:case="'success'">Schließen Sie bitte das Fenster</span>
-        </div>
+        </span>
     </div>
 </div>
 
