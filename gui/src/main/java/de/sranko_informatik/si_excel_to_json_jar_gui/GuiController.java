@@ -1,6 +1,7 @@
 package de.sranko_informatik.si_excel_to_json_jar_gui;
 
 import de.sranko_informatik.si_excel_to_json_jar_core.FileService;
+import de.sranko_informatik.si_excel_to_json_jar_core.TainasResponse;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,23 +46,23 @@ public class GuiController {
                              RedirectAttributes redirectAttributes) {
 
         JSONObject callbackData = null;
-        String response = null, msg = null;
+        TainasResponse response = null;
+        String msg = null;
         fileService = new FileService();
         try {
             callbackData = fileService.parseFile(file);
             System.out.println(callbackData.toString());
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
-            msg = "Import wurde erfolgreich durchgeführt.";
 
         } catch (IOException e) {
             e.printStackTrace();
-            msg = "Daten könnten nicht versendete werden.";
-            response = e.toString();
+            response = new TainasResponse("Error", "IOException", e.getMessage());
 
         }
 
-        redirectAttributes.addFlashAttribute("message", msg);
-        redirectAttributes.addFlashAttribute("response", response);
+        redirectAttributes.addFlashAttribute("status", response.getStatus());
+        redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
+        redirectAttributes.addFlashAttribute("messageText", response.getMessageText());
 
         return "redirect:/uploaded";
     }

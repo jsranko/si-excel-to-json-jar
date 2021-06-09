@@ -6,12 +6,8 @@
 </head>
 <body>
 
-<div th:if="${message}">
-    <h2 th:text="${message}"/>
-</div>
+<h2 th:text="${status} + ':' + ${messageId}">Status: MessageId</h2>
+<span th:text="${messageText}">Hello</span>
 
-<div th:if="${response}">
-    <h2 th:text="${response}"/>
-</div>
 </body>
 </html>

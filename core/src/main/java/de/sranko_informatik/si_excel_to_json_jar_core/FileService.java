@@ -88,7 +88,7 @@ public class FileService {
         return ExcelParser.getJSONObject(file);
     }
 
-    public String sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl, String trustStore, String password) throws IOException {
+    public TainasResponse sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl, String trustStore, String password) throws IOException {
 
         Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 
@@ -111,14 +111,14 @@ public class FileService {
 
             logger.debug(String.format("Payload wird an %s übermittelt.", callbackUrl.toString()));
 
-            ResponseEntity<String> response = restTemplate.exchange(callbackUrl, HttpMethod.POST, entity, String.class);
+            TainasResponse response = restTemplate.postForObject(callbackUrl, entity, TainasResponse.class);
 
             logger.debug(String.format("Response erhalten: %s", response.toString()));
 
-            return response.getBody();
+            return response;
 
         } catch (HttpStatusCodeException ex) {
-            return ex.getResponseBodyAsString();
+            return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage());
         }
 
     }
