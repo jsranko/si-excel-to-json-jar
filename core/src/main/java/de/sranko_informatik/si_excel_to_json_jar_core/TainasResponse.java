@@ -5,6 +5,10 @@ public class TainasResponse {
     public String messageId;
     public String messageText;
 
+    public TainasResponse() {
+
+    }
+
     public TainasResponse(String status, String messageId, String messageText) {
         this.status = status;
         this.messageId = messageId;
