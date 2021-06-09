@@ -14,7 +14,7 @@
         #status_area {
             height: 400px;
             border: 2px dashed #13911D;
-            line-height: 200px;
+            --line-height: 200px;
             font-size: 20px;
             margin-bottom: 15px;
         }
@@ -24,7 +24,8 @@
 
 <div class="container">
     <div id="status_area">
-        <h2 th:text="${status} + ': ' + ${messageText}">Error: Bla bla bla bla bla</h2>
+        <h2 th:text="${status}">Status</h2>
+        <h3 th:text="${messageText}">Message text</h3>
         <span th:switch="${status}">
             <span th:case="'Error'">Schließen Sie bitte das Fenster und wiederholen Sie den Import</span>
             <span th:case="'success'">Schließen Sie bitte das Fenster</span>
