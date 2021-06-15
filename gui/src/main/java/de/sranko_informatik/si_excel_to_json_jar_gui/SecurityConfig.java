@@ -1,36 +1,52 @@
 package de.sranko_informatik.si_excel_to_json_jar_gui;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-import javax.annotation.PostConstruct;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private Environment env;
+    @Value("${security.basic.username}")
+    private String username;
+
+    @Value("${security.basic.password}")
+    private String password;
+
+    @Value("${security.basic.enabled}")
+    private boolean basicEnabled;
+
+    @Value("${security.csrf.enabled}")
+    private boolean csrfEnabled;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().disable();
-        http.csrf().disable();
+        if (!basicEnabled) {
+            http.httpBasic().disable();
+        }
+
+        if (!csrfEnabled) {
+            http.csrf().disable();
+        }
     }
 
-/*
-    @PostConstruct
-    private void configureSSL() {
-        System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
-        System.out.println("\"javax.net.ssl.trustStore\":".concat(System.getProperty("javax.net.ssl.trustStore")));
-        System.setProperty("javax.net.ssl.trustStorePassword",env.getProperty("server.ssl.trust-store-password"));
-        System.out.println("\"javax.net.ssl.trustStorePassword\":".concat(System.getProperty("javax.net.ssl.trustStorePassword")));
-        System.setProperty("javax.net.ssl.trustStoreType",env.getProperty("server.ssl.trust-store-type"));
-        System.out.println("\"javax.net.ssl.trustStoreType\":".concat(System.getProperty("javax.net.ssl.trustStoreType")));
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth)
+            throws Exception
+    {
+        auth.inMemoryAuthentication()
+                .withUser(username)
+                .password(password)
+                .roles("USER");
     }
- */
 }
