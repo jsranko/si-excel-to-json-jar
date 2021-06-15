@@ -56,11 +56,12 @@ public class GuiController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            response = new TainasResponse("Error", "IOException", e.getMessage());
+            response = new TainasResponse("Error", "IOException", e.getMessage(), "N/A");
 
         }
 
         redirectAttributes.addFlashAttribute("status", response.getStatus());
+        redirectAttributes.addFlashAttribute("jobid", response.getJobid());
         redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
         redirectAttributes.addFlashAttribute("messageText", response.getMessageText());
 

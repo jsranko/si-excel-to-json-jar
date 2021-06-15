@@ -83,9 +83,9 @@ public class ExcelParser {
                     int index = 0;
                     for (ExcelColumn column: rowColumnsList) {
                         jsonRow.put(headerList.get(index) ,column.getValue());
-                        logger.debug(String.format("Zeile %s erstellt: %s", index, jsonRow.toString()));
                         index += 1;
                     }
+                    logger.debug(String.format("Zeile %s erstellt: %s", index, jsonRow.toString()));
                     sheetList.put(jsonRow);
                 }
             }

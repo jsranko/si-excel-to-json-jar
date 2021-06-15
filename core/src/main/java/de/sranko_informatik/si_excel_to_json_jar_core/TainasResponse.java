@@ -1,6 +1,7 @@
 package de.sranko_informatik.si_excel_to_json_jar_core;
 
 public class TainasResponse {
+    public String jobid;
     public String status;
     public String messageId;
     public String messageText;
@@ -9,10 +10,12 @@ public class TainasResponse {
 
     }
 
-    public TainasResponse(String status, String messageId, String messageText) {
+    public TainasResponse(String status, String messageId, String messageText, String jobid) {
+        this.jobid = jobid;
         this.status = status;
         this.messageId = messageId;
         this.messageText = messageText;
+
     }
 
     public boolean isError(){
@@ -35,5 +38,9 @@ public class TainasResponse {
     @Override
     public String toString() {
         return String.format("status: %s, messageId: %s, messageText: %s", getStatus(), getMessageId(), getMessageText());
+    }
+
+    public String getJobid() {
+        return jobid;
     }
 }

@@ -118,7 +118,7 @@ public class FileService {
             return response;
 
         } catch (HttpStatusCodeException ex) {
-            return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage());
+            return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage(), "N/A");
         }
 
     }
