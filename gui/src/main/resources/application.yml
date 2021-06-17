@@ -16,6 +16,10 @@ client:
 
 security:
   basic:
+    username: user
+    password: password
+    enabled: false
+  csrf:
     enabled: false
 
 management:

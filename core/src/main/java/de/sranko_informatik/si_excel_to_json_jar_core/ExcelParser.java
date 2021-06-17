@@ -69,25 +69,24 @@ public class ExcelParser {
 
             List<String> headerList = null;
 
+            //First row in Excel ist always table head
+            headerList = getTableColumns(sheet.getRow(0));
+            logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
+
             //Create a loop over all the rows of excel file to read it
-            for (int i = 0; i < rowCount+1; i++) {
+            for (int i = 1; i < rowCount+1; i++) {
 
                 Row row = sheet.getRow(i);
 
-                if (isTableHead(workbook, row.getCell(0))) {
-                    headerList = getTableColumns(row);
-                    logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
-                } else {
-                    List<ExcelColumn> rowColumnsList = getRowColumns(row);
-                    JSONObject jsonRow = new JSONObject();
-                    int index = 0;
-                    for (ExcelColumn column: rowColumnsList) {
-                        jsonRow.put(headerList.get(index) ,column.getValue());
-                        index += 1;
-                    }
-                    logger.debug(String.format("Zeile %s erstellt: %s", index, jsonRow.toString()));
-                    sheetList.put(jsonRow);
+                List<ExcelColumn> rowColumnsList = getRowColumns(row, headerList.size());
+                JSONObject jsonRow = new JSONObject();
+                int index = 0;
+                for (ExcelColumn column: rowColumnsList) {
+                    jsonRow.put(headerList.get(index) ,column.getValue());
+                    index += 1;
                 }
+                logger.debug(String.format("Zeile %s erstellt: %s", index, jsonRow.toString()));
+                sheetList.put(jsonRow);
             }
 
             JSONObject sheetJSON = new JSONObject();
@@ -140,12 +139,12 @@ public class ExcelParser {
         return output;
     }
 
-    public static List<ExcelColumn> getRowColumns(Row row) {
+    public static List<ExcelColumn> getRowColumns(Row row, int size) {
 
         List<ExcelColumn> output = new ArrayList<>();
 
         //Create a loop to print cell values in a row
-        for (int c = 0; c < row.getLastCellNum(); c++) {
+        for (int c = 0; c < size; c++) {
 
             //Print Excel data in console
             Cell cell = row.getCell(c);
@@ -166,6 +165,9 @@ public class ExcelParser {
                     break;
                 case STRING:
                     output.add(new ExcelColumn(ColumnType.VARCHAR, null, cell.getRichStringCellValue().getString()));
+                    break;
+                case BLANK:
+                    output.add(new ExcelColumn(ColumnType.VARCHAR, null, ""));
                     break;
             }
         }
