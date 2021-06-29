@@ -29,7 +29,7 @@ public class ExcelParser {
 
         //Find the file extension by splitting file name in substring  and getting only extension name
 
-        String fileExtensionName = file.getOriginalFilename().substring(file.getOriginalFilename().indexOf("."));
+        String fileExtensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 
         //Check condition if the file is xlsx file
         if(fileExtensionName.equals(".xlsx")){
