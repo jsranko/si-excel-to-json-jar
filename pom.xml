@@ -19,6 +19,7 @@
         <module>gui</module>
     </modules>
     <properties>
+        <log4j2.version>2.15.0</log4j2.version>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
