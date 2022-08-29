@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -117,7 +118,7 @@ public class FileService {
 
             return response;
 
-        } catch (HttpStatusCodeException ex) {
+        } catch (RestClientException ex) {
             return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage(), "N/A");
         }
 
