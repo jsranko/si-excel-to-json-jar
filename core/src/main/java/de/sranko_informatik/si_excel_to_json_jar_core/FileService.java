@@ -211,7 +211,9 @@ public class FileService {
                     .setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier()))
                     .build();
 
-            return new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
+            RestTemplate template =new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
+            template.setErrorHandler(new RestTemplateResponseErrorHandler());
+            return template;
         } catch (IOException | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
