@@ -119,6 +119,7 @@ public class FileService {
             return response;
 
         } catch (RestClientException ex) {
+            logger.debug(String.format("Exception: %s", ex.getMessage()));
             return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage(), "N/A");
         }
 
