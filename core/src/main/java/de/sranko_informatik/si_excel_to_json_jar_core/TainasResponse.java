@@ -37,7 +37,7 @@ public class TainasResponse {
 
     @Override
     public String toString() {
-        return String.format("status: %s, messageId: %s, messageText: %s", getStatus(), getMessageId(), getMessageText());
+        return String.format("jobid: %s, status: %s, messageId: %s, messageText: %s", getJobid(), getStatus(), getMessageId(), getMessageText());
     }
 
     public String getJobid() {

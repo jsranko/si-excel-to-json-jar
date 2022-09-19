@@ -63,7 +63,7 @@ public class GuiController {
             response = new TainasResponse("Error", "Exception", sw.toString(), "N/A");
 
         }
-
+        System.out.println(response.toString());
         redirectAttributes.addFlashAttribute("status", response.getStatus());
         redirectAttributes.addFlashAttribute("jobid", response.getJobid());
         redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
