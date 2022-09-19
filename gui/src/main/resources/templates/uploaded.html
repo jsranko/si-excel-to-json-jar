@@ -26,7 +26,7 @@
     <div id="status_area">
         <h2 th:text="${status}">Status</h2>
         <h3 th:text="${messageText}">Message text</h3>
-        <span th:ext="'Job-ID: ' + ${jobid} + ', Message-ID: ' + ${messageId}">Job-ID: 156465/SRANKO/QPADEW00, Message-ID: WebTaskErrorXY</span>
+        <span th:text="'Job-ID: ' + ${jobid} + ', Message-ID: ' + ${messageId}">Job-ID: 156465/SRANKO/QPADEW00, Message-ID: WebTaskErrorXY</span>
         </br></br>
         <span th:switch="${status}">
             <span th:case="'Error'">Schließen Sie bitte das Fenster und wiederholen Sie den Import</span>
