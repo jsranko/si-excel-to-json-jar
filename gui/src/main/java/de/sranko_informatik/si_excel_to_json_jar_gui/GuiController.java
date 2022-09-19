@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 @Controller
 public class GuiController {
@@ -55,8 +57,10 @@ public class GuiController {
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
 
         } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-            response = new TainasResponse("Error", "IOException", e.getMessage(), "N/A");
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            response = new TainasResponse("Error", "Exception", sw.toString(), "N/A");
 
         }
 
