@@ -29,6 +29,7 @@
         <span th:text="'Job-ID: ' + ${jobid} + ', Message-ID: ' + ${messageId}">Job-ID: 156465/SRANKO/QPADEW00, Message-ID: WebTaskErrorXY</span>
         </br></br>
         <span th:switch="${status}">
+            <span th:case="Exception">Verwendete Exceldatei scheint nicht kompatible zu sein. Bitte wenden Sie sich auf IT-Support.</span>
             <span th:case="'Error'">Schließen Sie bitte das Fenster und wiederholen Sie den Import</span>
             <span th:case="'Success'">Schließen Sie bitte das Fenster</span>
         </span>

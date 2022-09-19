@@ -61,11 +61,17 @@ public class GuiController {
             logger.debug(callbackData.toString());
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
 
-        } catch (IOException | NullPointerException e) {
+        } catch ( NullPointerException e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            response = new TainasResponse("Error", "Exception", sw.toString().substring(1, 256).concat(" ..."), "N/A");
+            response = new TainasResponse("Exception", "NullPointerException", sw.toString().substring(1, 256).concat(" ..."), "N/A");
+
+        }catch (IOException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            response = new TainasResponse("Error", "IOException", sw.toString().substring(1, 256).concat(" ..."), "N/A");
 
         }
         logger.debug(response.toString());
