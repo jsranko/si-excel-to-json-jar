@@ -65,7 +65,7 @@ public class GuiController {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            response = new TainasResponse("Error", "Exception", sw.toString(), "N/A");
+            response = new TainasResponse("Error", "Exception", sw.toString().substring(1, 256).concat(" ..."), "N/A");
 
         }
         logger.debug(response.toString());
