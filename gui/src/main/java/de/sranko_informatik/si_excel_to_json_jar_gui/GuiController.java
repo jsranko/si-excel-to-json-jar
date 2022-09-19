@@ -1,8 +1,11 @@
 package de.sranko_informatik.si_excel_to_json_jar_gui;
 
+import de.sranko_informatik.si_excel_to_json_jar_core.ExcelParser;
 import de.sranko_informatik.si_excel_to_json_jar_core.FileService;
 import de.sranko_informatik.si_excel_to_json_jar_core.TainasResponse;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -47,13 +50,15 @@ public class GuiController {
                              @RequestParam(name = "clientInfo") String clientInfo,
                              RedirectAttributes redirectAttributes) {
 
+        Logger logger = LoggerFactory.getLogger(GuiController.class);
+
         JSONObject callbackData = null;
         TainasResponse response = null;
         String msg = null;
         fileService = new FileService();
         try {
             callbackData = fileService.parseFile(file);
-            System.out.println(callbackData.toString());
+            logger.debug(callbackData.toString());
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
 
         } catch (IOException | NullPointerException e) {
@@ -63,7 +68,7 @@ public class GuiController {
             response = new TainasResponse("Error", "Exception", sw.toString(), "N/A");
 
         }
-        System.out.println(response.toString());
+        logger.debug(response.toString());
         redirectAttributes.addFlashAttribute("status", response.getStatus());
         redirectAttributes.addFlashAttribute("jobid", response.getJobid());
         redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
