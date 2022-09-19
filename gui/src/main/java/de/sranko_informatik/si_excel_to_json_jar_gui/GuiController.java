@@ -54,7 +54,7 @@ public class GuiController {
             System.out.println(callbackData.toString());
             response = fileService.sendData(callbackData, new JSONObject(clientInfo),callbackUrl, trustStore, trustStorePassword);
 
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             response = new TainasResponse("Error", "IOException", e.getMessage(), "N/A");
 

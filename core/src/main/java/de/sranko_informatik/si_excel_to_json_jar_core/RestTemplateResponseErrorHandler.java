@@ -1,8 +1,6 @@
 package de.sranko_informatik.si_excel_to_json_jar_core;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.jce.exception.ExtIOException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;

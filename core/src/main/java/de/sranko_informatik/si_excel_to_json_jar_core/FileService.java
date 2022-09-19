@@ -84,7 +84,7 @@ public class FileService {
         }
     }
 
-    public JSONObject parseFile(MultipartFile file) throws IOException {
+    public JSONObject parseFile(MultipartFile file) throws IOException, NullPointerException {
 
         return ExcelParser.getJSONObject(file);
     }
