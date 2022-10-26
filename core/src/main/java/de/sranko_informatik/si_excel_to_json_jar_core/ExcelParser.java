@@ -66,6 +66,7 @@ public class ExcelParser {
 
             //Find number of rows in excel file
             int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+            logger.debug(String.format("Table row count %s found", rowCount));
 
             List<String> headerList = null;
 
@@ -78,7 +79,12 @@ public class ExcelParser {
 
                 Row row = sheet.getRow(i);
 
-                List<ExcelColumn> rowColumnsList = getRowColumns(row, headerList.size());
+                List<ExcelColumn> rowColumnsList = null;
+                try {
+                    rowColumnsList = getRowColumns(row, headerList.size());
+                } catch (Exception e) {
+                    logger.debug(String.format("Error found: %s", e.toString()));
+                }
                 JSONObject jsonRow = new JSONObject();
                 int index = 0;
                 for (ExcelColumn column: rowColumnsList) {
