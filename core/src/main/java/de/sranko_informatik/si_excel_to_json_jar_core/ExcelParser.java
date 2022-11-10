@@ -117,6 +117,9 @@ public class ExcelParser {
 
             Row row = sheet.getRow(tableDataRow + i);
 
+            if (isRowEmpty(row)) {
+                continue;
+            }
             List<ExcelColumn> rowColumnsList = null;
             try {
                 rowColumnsList = getRowColumns(row, headerList.size());
@@ -217,5 +220,21 @@ public class ExcelParser {
 
         return output;
 
+    }
+
+    private static boolean isRowEmpty(Row row) {
+        boolean isEmpty = true;
+        DataFormatter dataFormatter = new DataFormatter();
+
+        if (row != null) {
+            for (Cell cell : row) {
+                if (dataFormatter.formatCellValue(cell).trim().length() > 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+
+        return isEmpty;
     }
 }
