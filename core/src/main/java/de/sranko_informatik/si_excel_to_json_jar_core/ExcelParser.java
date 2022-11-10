@@ -14,10 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ExcelParser {
 
-    public static JSONObject getJSONObject(MultipartFile file) throws IOException{
+    public static JSONObject getJSONObject(MultipartFile file, ActionDataSheet actionData) throws IOException{
 
         Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 
@@ -52,59 +53,94 @@ public class ExcelParser {
         logger.debug(String.format("%s Sheets werden bearbeitet.", workbook.getNumberOfSheets()));
 
         JSONObject workbookJSON = new JSONObject();
+        workbookJSON.put("name", file.getOriginalFilename());
+        JSONObject sheetJSON = null;
+        Sheet sheet = null;
 
-        //Create a root json object
-        for (int s = 0; s < workbook.getNumberOfSheets(); s++){
+        if (!Objects.isNull(actionData)) {
 
-            //Read sheet inside the workbook by index
-            Sheet sheet = workbook.getSheetAt(s);
+            sheet = workbook.getSheet(actionData.getSheet());
 
-            logger.debug(String.format("Sheet: %s wird bearbeitet.", sheet.getSheetName()));
+            workbookJSON = getSheetAsJSON(workbookJSON, sheet, actionData.getStart().getRow(), actionData.getStart().getColumn());
 
-            List<ExcelColumn> rowList;
-            JSONArray sheetList = new JSONArray();
+        } else {
 
-            //Find number of rows in excel file
-            int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
-            logger.debug(String.format("Table row count %s found", rowCount));
+            //Create a root json object
+            for (int s = 0; s < workbook.getNumberOfSheets(); s++) {
 
-            List<String> headerList = null;
+                //Read sheet inside the workbook by index
+                sheet = workbook.getSheetAt(s);
 
-            //First row in Excel ist always table head
-            headerList = getTableColumns(sheet.getRow(0));
-            logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
+                workbookJSON = getSheetAsJSON(workbookJSON, sheet, 0, 0);
 
-            //Create a loop over all the rows of excel file to read it
-            for (int i = 1; i < rowCount+1; i++) {
-
-                Row row = sheet.getRow(i);
-
-                List<ExcelColumn> rowColumnsList = null;
-                try {
-                    rowColumnsList = getRowColumns(row, headerList.size());
-                } catch (Exception e) {
-                    logger.debug(String.format("Error found: %s", e.toString()));
-                }
-                JSONObject jsonRow = new JSONObject();
-                int index = 0;
-                for (ExcelColumn column: rowColumnsList) {
-                    jsonRow.put(headerList.get(index) ,column.getValue());
-                    index += 1;
-                }
-                logger.debug(String.format("Zeile %s erstellt: %s", i, jsonRow.toString()));
-                sheetList.put(jsonRow);
             }
 
-            JSONObject sheetJSON = new JSONObject();
-            sheetJSON.put("name", sheet.getSheetName());
-            sheetJSON.put("data", sheetList);
-            workbookJSON.append("sheets", sheetJSON);
-            workbookJSON.put("name", file.getOriginalFilename());
-
-            logger.debug(String.format("Sheet %s ist fertig. %s", sheet.getSheetName(), sheetJSON.toString()));
         }
 
+        logger.debug(String.format("Workbook %s ist fertig", file.getOriginalFilename()));
+
         return workbookJSON;
+    }
+
+    private static JSONObject getSheetAsJSON(JSONObject workbookJSON, Sheet sheet, int startRow, int startColumn){
+
+        Logger logger = LoggerFactory.getLogger(ExcelParser.class);
+
+        logger.debug(String.format("Sheet: %s wird von Zeile: %s und Splate: %s bearbeitet.", sheet.getSheetName(), startRow, startColumn));
+
+        JSONArray sheetList = new JSONArray();
+
+        //Find number of rows in excel file
+        int rowCount = 0;
+        int tableDataRow = 0;
+        if (startRow == 0) {
+            rowCount = sheet.getLastRowNum() - sheet.getFirstRowNum();
+        } else {
+            rowCount = sheet.getLastRowNum() - startRow;
+        }
+
+        logger.debug(String.format("%s Zeilen werden bearbeitet", rowCount));
+
+        List<String> headerList = null;
+
+        //First row in Excel ist always table head
+        int headerRow = 0;
+        if (startRow != 0) {
+            headerRow = startRow - 1;
+        }
+        headerList = getTableColumns(sheet.getRow(headerRow), startColumn);
+        logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
+
+        //Create a loop over all the rows of excel file to read it
+        tableDataRow = headerRow + 1;
+        for (int i = 0; i < rowCount; i++) {
+
+            Row row = sheet.getRow(tableDataRow + i);
+
+            List<ExcelColumn> rowColumnsList = null;
+            try {
+                rowColumnsList = getRowColumns(row, headerList.size());
+            } catch (Exception e) {
+                logger.debug(String.format("Error found: %s", e.toString()));
+            }
+            JSONObject jsonRow = new JSONObject();
+            int index = 0;
+            for (ExcelColumn column : rowColumnsList) {
+                jsonRow.put(headerList.get(index), column.getValue());
+                index += 1;
+            }
+            logger.debug(String.format("Zeile %s erstellt: %s", i, jsonRow.toString()));
+            sheetList.put(jsonRow);
+        }
+
+        JSONObject sheetJSON = new JSONObject();
+        sheetJSON.put("name", sheet.getSheetName());
+        sheetJSON.put("data", sheetList);
+        workbookJSON.append("sheets", sheetJSON);
+
+        logger.debug(String.format("Sheet %s ist fertig. %s", sheet.getSheetName(), sheetList));
+
+        return  workbookJSON;
     }
 
     public static boolean isTableHead (Workbook book, Cell cell) {
@@ -119,12 +155,13 @@ public class ExcelParser {
         return false;
     }
 
-    public static List<String> getTableColumns (Row row){
+    public static List<String> getTableColumns (Row row, int column){
 
         List<String> output = new ArrayList<String>();
 
         //Create a loop to print cell values in a row
-        for (int c = 0; c < row.getLastCellNum(); c++) {
+        int startCol = column;
+        for (int c = startCol; c < row.getLastCellNum(); c++) {
 
             //Print Excel data in console
             Cell cell = row.getCell(c);

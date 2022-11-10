@@ -106,6 +106,7 @@
             $(this).removeClass('drag_over');
             var formData = new FormData();
             formData.append('callback', [[${callbackUrl}]]);
+            formData.append('actionData', [[${actionData}]]);
             formData.append('clientInfo', JSON.stringify(clientInfo));
             //formData.append('file', e.originalEvent.dataTransfer.files.item(0));
             var files = e.originalEvent.dataTransfer.files;

@@ -10,21 +10,17 @@ import org.apache.http.ssl.SSLContexts;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
@@ -33,10 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 @Service
 public class FileService {
@@ -84,9 +76,9 @@ public class FileService {
         }
     }
 
-    public JSONObject parseFile(MultipartFile file) throws IOException, NullPointerException {
+    public JSONObject parseFile(MultipartFile file, ActionDataSheet actionData) throws IOException, NullPointerException {
 
-        return ExcelParser.getJSONObject(file);
+        return ExcelParser.getJSONObject(file, actionData);
     }
 
     public TainasResponse sendData(JSONObject callbackData, JSONObject clientInfo, String callbackUrl, String trustStore, String password) throws IOException {
