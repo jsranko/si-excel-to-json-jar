@@ -3,47 +3,16 @@
 
 <head>
     <title>IBM i File Upload</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-
-        body {
-            background-color: black;
-            color: #13911D;
-        }
-
-        #drop_file_area {
-            height: 400px;
-            border: 2px dashed #13911D;
-            line-height: 200px;
-            font-size: 20px;
-            margin-bottom: 15px;
-            background-image: url('images/drag_and_drop.png');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 20%
-        }
-        #processing_area {
-            height: 400px;
-            border: 2px dashed #13911D;
-            line-height: 200px;
-            font-size: 20px;
-            display: none;
-            margin-bottom: 15px;
-            background-image: url('images/processing.gif');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 20%
-        }
-        .drag_over {
-            color: #000;
-            border-color: #000;
-        }
-    </style>
+    <script src="images/jquery-3.6.1.min.js"></script>
+    <link rel="stylesheet" href="images/main.css">
 </head>
 
 <body>
 <div class="container">
-    <div id="drop_file_area">
+    <div id="drop_file_area" class="tainas_look">
+        <input type="file" name="files[]" id="file" class="box__file" data-multiple-caption="{count} files selected" multiple />
+        <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+        <button type="submit" class="box__button">Upload</button>
     </div>
     <div id="processing_area">
     </div>

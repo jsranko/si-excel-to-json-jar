@@ -2,16 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>ERROR</title>
+  <title>Sorry, something goes wrong</title>
+  <link rel="stylesheet" href="images/main.css">
 </head>
 <body>
 
-<h1>Something goes wrong :-(</h1>
+<div class="container">
+  <div id="status_area" class="tainas_look">
 
-<div th:if="${message}">
-  <!-- th:text="${message}" -->
+    <h2>Something goes wrong :-(</h2>
+    <h3 th:text="${message}">Message text</h3>
+    </br></br>
+    <span th:switch="${status}">
+            <span th:case="Exception">Bitte wenden Sie sich auf IT-Support.</span>
+        </span>
+  </div>
 </div>
-
 
 </body>
 </html>

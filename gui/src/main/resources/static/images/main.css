@@ -1,0 +1,37 @@
+body {
+    background-color: black;
+    color: #13911D;
+}
+
+.tainas_look {
+    height: 400px;
+    border: 2px dashed #13911D;
+    font-size: 20px;
+    min-width: 200px;
+    text-align: center;
+}
+#drop_file_area {
+
+    margin-bottom: 15px;
+    background-image: url('images/drag_and_drop.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20%
+}
+#processing_area {
+    display: none;
+    margin-bottom: 15px;
+    background-image: url('images/processing.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20%
+}
+.drag_over {
+    color: #000;
+    border-color: #000;
+}
+
+#status_area {
+
+    margin-bottom: 15px;
+}
