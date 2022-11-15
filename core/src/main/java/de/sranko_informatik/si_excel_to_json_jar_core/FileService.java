@@ -112,7 +112,7 @@ public class FileService {
 
         } catch (RestClientException ex) {
             logger.debug(String.format("Exception: %s", ex.getMessage()));
-            return new TainasResponse("Error", "HttpStatusCodeException", ex.getMessage(), "N/A");
+            return new TainasResponse("Sorry something went wrong :-)", "TAINAS-Server: WEBTASK is not available", ex.getMessage(), "An error occurred when sending the data");
         }
 
     }

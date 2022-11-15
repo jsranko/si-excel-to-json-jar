@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,17 +70,38 @@ public class GuiController {
         return "upload";
     }
 
+    @GetMapping("/2")
+    public String index2(@RequestParam(name = "d") String base64String,
+                        Model model) {
+        // Base64 dekodieren um URL und actionDaten zu ermitteln
+        if (base64String.isEmpty()) {
+            model.addAttribute("message", "Is Job CCSID not *HEX?");
+            return "index";
+        }
+        String callbackData = null;
+        try {
+            callbackData = new String(Base64.getDecoder().decode(base64String));
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("message", "URL-Data not valid (incorrect BAS64 data)");
+            return "index";
+        }
+
+        model.addAttribute("callbackData", callbackData);
+
+        return "index";
+    }
+
     @GetMapping("/uploaded")
     public String uploaded() {
         return "uploaded";
     }
 
     @PostMapping("/uploadFile")
-    public String uploadFile(@RequestParam(name = "file") MultipartFile file,
-                             @RequestParam(name = "callback") String callbackUrl,
-                             @RequestParam(name = "actionData") String actionData,
-                             @RequestParam(name = "clientInfo") String clientInfo,
-                             RedirectAttributes redirectAttributes) {
+    public ResponseEntity<TainasResponse> uploadFile(@RequestParam(name = "file") MultipartFile file,
+                                                     @RequestParam(name = "callback") String callbackUrl,
+                                                     @RequestParam(name = "actionData") String actionData,
+                                                     @RequestParam(name = "clientInfo") String clientInfo,
+                                                     RedirectAttributes redirectAttributes) {
 
         Logger logger = LoggerFactory.getLogger(GuiController.class);
 
@@ -99,34 +122,36 @@ public class GuiController {
             }
 
         } else {
-            logger.debug("Keine actionData ubergeben");
+            logger.debug("Keine actionData übergeben");
         }
 
         try {
             callbackData = fileService.parseFile(file, actionDataSheet);
             logger.debug(callbackData.toString());
-            response = fileService.sendData(callbackData, new JSONObject(clientInfo), callbackUrl, trustStore, trustStorePassword);
-
-        } catch ( NullPointerException e) {
+        } catch ( NullPointerException | IOException e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            response = new TainasResponse("Exception", "NullPointerException", sw.toString().substring(0, 256).concat(" ..."), "N/A");
-
-        }catch (IOException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            response = new TainasResponse("Error", "IOException", sw.toString().substring(0, 256).concat(" ..."), "N/A");
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new TainasResponse("Sorry something went wrong :-)", e.getMessage(), sw.toString().substring(0, 256).concat(" ..."), "Error occurred while parsing the file."));
         }
-        logger.debug(response.toString());
-        redirectAttributes.addFlashAttribute("status", response.getStatus());
-        redirectAttributes.addFlashAttribute("jobid", response.getJobid());
-        redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
-        redirectAttributes.addFlashAttribute("messageText", response.getMessageText());
 
-        return "redirect:/uploaded";
+        try {
+            response = fileService.sendData(callbackData, new JSONObject(clientInfo), callbackUrl, trustStore, trustStorePassword);
+            logger.debug(response.toString());
+        } catch (IOException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new TainasResponse("Sorry something went wrong :-)", "IOException", sw.toString().substring(0, 256).concat(" ..."), "An error occurred when sending the data"));
+        }
+
+//        logger.debug(response.toString());
+//        redirectAttributes.addFlashAttribute("status", response.getStatus());
+//        redirectAttributes.addFlashAttribute("jobid", response.getJobid());
+//        redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
+//        redirectAttributes.addFlashAttribute("messageText", response.getMessageText());
+
+        return ResponseEntity.ok(response);
     }
 
 }
