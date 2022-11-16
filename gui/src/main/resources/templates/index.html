@@ -314,6 +314,11 @@
                 errorJobid	 = form.querySelector( '.box__error .jobid' ),
                 errorMsgid	 = form.querySelector( '.box__error .msgid' ),
                 errorMsgtxt	 = form.querySelector( '.box__error .msgtxt' ),
+                successMsg	 = form.querySelector( '.box__error span' ),
+                successStatus	 = form.querySelector( '.box__success .status' ),
+                successJobid	 = form.querySelector( '.box__success .jobid' ),
+                successMsgid	 = form.querySelector( '.box__success .msgid' ),
+                successMsgtxt	 = form.querySelector( '.box__success .msgtxt' ),
                 restart		 = form.querySelectorAll( '.box__restart' ),
                 submitButton = form.querySelector( '.box__button' ),
                 droppedFiles = false,
@@ -462,11 +467,11 @@
 
                             var data = JSON.parse( ajax.responseText );
                             form.classList.add( 'is-success' );
-                            errorMsg.textContent = "Please close the window";
-                            errorStatus.textContent = data.status;
-                            errorJobid.textContent = data.jobid;
-                            errorMsgid.textContent = data.messageId;
-                            errorMsgtxt.textContent = data.messageText;
+                            successMsg.textContent = "Please close the window";
+                            successStatus.textContent = data.status;
+                            successJobid.textContent = data.jobid;
+                            successMsgid.textContent = data.messageId;
+                            successMsgtxt.textContent = data.messageText;
                         }
                         else
                         {
