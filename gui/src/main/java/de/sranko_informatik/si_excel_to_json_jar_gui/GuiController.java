@@ -43,39 +43,6 @@ public class GuiController {
         // Base64 dekodieren um URL und actionDaten zu ermitteln
         if (base64String.isEmpty()) {
             model.addAttribute("message", "Is Job CCSID not *HEX?");
-            return "error";
-        }
-        String callbackData = null;
-        try {
-            callbackData = new String(Base64.getDecoder().decode(base64String));
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("message", "URL-Data not valid (incorrect BAS64 data)");
-            return "error";
-        }
-
-
-        //JSON String parsen
-        ObjectMapper objectMapper = new ObjectMapper();
-        ActionData actionData = null;
-        try {
-            actionData = objectMapper.readValue(callbackData, ActionData.class);
-        } catch (IOException e) {
-            model.addAttribute("message", "ActionData not valid.");
-            return "error";
-        }
-
-        model.addAttribute("actionData", actionData.getActionData());
-        model.addAttribute("callbackUrl", actionData.getUrl());
-
-        return "upload";
-    }
-
-    @GetMapping("/2")
-    public String index2(@RequestParam(name = "d") String base64String,
-                        Model model) {
-        // Base64 dekodieren um URL und actionDaten zu ermitteln
-        if (base64String.isEmpty()) {
-            model.addAttribute("message", "Is Job CCSID not *HEX?");
             return "index";
         }
         String callbackData = null;
