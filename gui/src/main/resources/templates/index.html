@@ -267,7 +267,13 @@
 
 
         <div class="box__uploading"><img src="images/processing.gif"></div>
-        <div class="box__success"><h1><span class="status">Done!</span></h1> </div>
+        <div class="box__success">
+            <h1><span class="status"></span></h1>
+            <strong><span class="jobid">:</span></strong>
+            <span>: </span>
+            <span class="msgid"></span></br>
+            <small><span class="msgtxt"></span></small></br></br>
+        </div>
         <div class="box__error">
             <h1><span class="status"></span></h1>
             <strong><span class="jobid">:</span></strong>
@@ -453,11 +459,10 @@
                         form.classList.remove( 'is-uploading' );
                         if( ajax.status == 200 )
                         {
-                            console.log(ajax.responseText);
 
                             var data = JSON.parse( ajax.responseText );
-                            form.classList.add( data.success == true ? 'is-success' : 'is-error' );
-                            if( !data.success ) errorMsg.textContent = data.error;
+                            form.classList.add( 'is-success' );
+                            errorMsg.textContent = "Please close the window";
                             errorStatus.textContent = data.status;
                             errorJobid.textContent = data.jobid;
                             errorMsgid.textContent = data.messageId;
@@ -467,7 +472,7 @@
                         {
                             var data = JSON.parse( ajax.responseText );
                             form.classList.add( 'is-error' );
-                            errorMsg.textContent = 'contact administrator';
+                            errorMsg.textContent = "contact administrator";
                             errorStatus.textContent = data.status;
                             errorJobid.textContent = data.jobid;
                             errorMsgid.textContent = data.messageId;
