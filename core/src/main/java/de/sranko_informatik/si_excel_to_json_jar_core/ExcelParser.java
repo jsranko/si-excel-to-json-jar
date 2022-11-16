@@ -12,9 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class ExcelParser {
 
@@ -187,6 +190,10 @@ public class ExcelParser {
 
     public static List<ExcelColumn> getRowColumns(Row row, int size) {
 
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone("CET"));
+
         List<ExcelColumn> output = new ArrayList<>();
 
         //Create a loop to print cell values in a row
@@ -207,12 +214,19 @@ public class ExcelParser {
                     output.add(new ExcelColumn(ColumnType.CHAR, null, String.valueOf(cell.getBooleanCellValue())));
                     break;
                 case NUMERIC:
-                    output.add(new ExcelColumn(ColumnType.NUMBER, null, NumberToTextConverter.toText(cell.getNumericCellValue())));
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        output.add(new ExcelColumn(ColumnType.NUMBER, null, sdf.format(cell.getDateCellValue())));
+                    } else {
+                        output.add(new ExcelColumn(ColumnType.NUMBER, null, NumberToTextConverter.toText(cell.getNumericCellValue())));
+                    }
+
                     break;
                 case STRING:
                     output.add(new ExcelColumn(ColumnType.VARCHAR, null, cell.getRichStringCellValue().getString()));
                     break;
                 case BLANK:
+                case _NONE:
+                case ERROR:
                     output.add(new ExcelColumn(ColumnType.VARCHAR, null, ""));
                     break;
             }

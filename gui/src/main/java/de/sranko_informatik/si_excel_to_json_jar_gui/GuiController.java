@@ -145,12 +145,6 @@ public class GuiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new TainasResponse("Sorry something went wrong :-)", "IOException", sw.toString().substring(0, 256).concat(" ..."), "An error occurred when sending the data"));
         }
 
-//        logger.debug(response.toString());
-//        redirectAttributes.addFlashAttribute("status", response.getStatus());
-//        redirectAttributes.addFlashAttribute("jobid", response.getJobid());
-//        redirectAttributes.addFlashAttribute("messageId", response.getMessageId());
-//        redirectAttributes.addFlashAttribute("messageText", response.getMessageText());
-
         return ResponseEntity.ok(response);
     }
 
