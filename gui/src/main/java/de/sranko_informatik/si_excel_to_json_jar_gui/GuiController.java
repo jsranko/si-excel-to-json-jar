@@ -85,7 +85,10 @@ public class GuiController {
             try {
                 actionDataSheet = mapper.readValue(actionData, ActionDataSheet.class);
             } catch (JsonProcessingException  e) {
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TainasResponse("Transferred data have wrong format. :-)", e.getMessage(), sw.toString().substring(0, 256).concat(" ..."), "ActionData not valid."));
             }
 
         } else {

@@ -25,7 +25,7 @@
         .container
         {
             width: 100%;
-            max-width: 680px; /* 800 */
+            max-width: 9000px; /* 800 */
             text-align: center;
             margin: 0 auto;
         }
@@ -444,7 +444,7 @@
                     // gathering the form data
                     var ajaxData = new FormData( form );
                     ajaxData.append('callback', callBackData.url);
-                    ajaxData.append('actionData', JSON.stringify(callBackData.actionData));
+                    ajaxData.append('actionData', JSON.stringify(JSON.parse(callBackData.actionData)));
                     ajaxData.append('clientInfo', JSON.stringify(clientInfo));
 
                     if( droppedFiles )
