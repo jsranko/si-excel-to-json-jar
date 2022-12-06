@@ -21,7 +21,7 @@ import java.util.TimeZone;
 
 public class ExcelParser {
 
-    public static JSONObject getJSONObject(MultipartFile file, ActionDataSheet actionData) throws IOException{
+    public static JSONObject getJSONObject(MultipartFile file, ActionDataSheet actionData) throws IOException, IllegalStateException {
 
         Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 
@@ -85,7 +85,7 @@ public class ExcelParser {
         return workbookJSON;
     }
 
-    private static JSONObject getSheetAsJSON(JSONObject workbookJSON, Sheet sheet, int startRow, int startColumn){
+    private static JSONObject getSheetAsJSON(JSONObject workbookJSON, Sheet sheet, int startRow, int startColumn) throws IllegalStateException{
 
         Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 
@@ -161,7 +161,7 @@ public class ExcelParser {
         return false;
     }
 
-    public static List<String> getTableColumns (Row row, int column){
+    public static List<String> getTableColumns (Row row, int column) throws IllegalStateException{
 
         List<String> output = new ArrayList<String>();
 
