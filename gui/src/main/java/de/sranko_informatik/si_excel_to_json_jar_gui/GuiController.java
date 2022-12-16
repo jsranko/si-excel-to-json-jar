@@ -97,7 +97,7 @@ public class GuiController {
 
         try {
             callbackData = fileService.parseFile(file, actionDataSheet);
-            logger.debug(callbackData.toString());
+            logger.debug(callbackData.toString().substring(1, 256).concat("..."));
         } catch ( IllegalStateException | NullPointerException | IOException e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
