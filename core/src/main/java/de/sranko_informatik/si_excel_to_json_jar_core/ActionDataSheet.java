@@ -1,5 +1,8 @@
 package de.sranko_informatik.si_excel_to_json_jar_core;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ActionDataSheet {
     private String sheet;
     private ActionDataSheetStart start;
