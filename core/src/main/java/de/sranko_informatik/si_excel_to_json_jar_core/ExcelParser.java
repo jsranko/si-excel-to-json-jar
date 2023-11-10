@@ -64,7 +64,7 @@ public class ExcelParser {
 
             sheet = workbook.getSheet(actionData.getSheet());
 
-            workbookJSON = getSheetAsJSON(workbookJSON, sheet, actionData.getStart().getRow(), actionData.getStart().getColumn());
+            workbookJSON = getSheetAsJSON(workbookJSON, sheet, actionData.getStart().getRow(), actionData.getStart().getColumn(), actionData.getFieldsToUpload());
 
         } else {
 
@@ -74,7 +74,7 @@ public class ExcelParser {
                 //Read sheet inside the workbook by index
                 sheet = workbook.getSheetAt(s);
 
-                workbookJSON = getSheetAsJSON(workbookJSON, sheet, 0, 0);
+                workbookJSON = getSheetAsJSON(workbookJSON, sheet, 0, 0, null);
 
             }
 
@@ -85,8 +85,9 @@ public class ExcelParser {
         return workbookJSON;
     }
 
-    private static JSONObject getSheetAsJSON(JSONObject workbookJSON, Sheet sheet, int startRow, int startColumn) throws IllegalStateException{
+    private static JSONObject getSheetAsJSON(JSONObject workbookJSON, Sheet sheet, int startRow, int startColumn, String[] fieldsToUpload) throws IllegalStateException{
 
+        ArrayList<Integer> fieldsNrToUpload = null;
         Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 
         logger.debug(String.format("Sheet: %s wird von Zeile: %s und Splate: %s bearbeitet.", sheet.getSheetName(), startRow, startColumn));
@@ -111,7 +112,7 @@ public class ExcelParser {
         if (startRow != 0) {
             headerRow = startRow - 1;
         }
-        headerList = getTableColumns(sheet.getRow(headerRow), startColumn);
+        headerList = getTableColumns(sheet.getRow(headerRow), startColumn, fieldsToUpload, fieldsNrToUpload);
         logger.debug(String.format("Tablenkopf gefunden: %s.", headerList.stream().toString()));
 
         //Create a loop over all the rows of excel file to read it
@@ -125,13 +126,14 @@ public class ExcelParser {
             }
             List<ExcelColumn> rowColumnsList = null;
             try {
-                rowColumnsList = getRowColumns(row, headerList.size());
+                rowColumnsList = getRowColumns(row, headerList.size(), fieldsNrToUpload);
             } catch (Exception e) {
                 logger.debug(String.format("Error found: %s", e.toString()));
             }
             JSONObject jsonRow = new JSONObject();
             int index = 0;
             for (ExcelColumn column : rowColumnsList) {
+
                 jsonRow.put(headerList.get(index), column.getValue());
                 index += 1;
             }
@@ -161,9 +163,10 @@ public class ExcelParser {
         return false;
     }
 
-    public static List<String> getTableColumns (Row row, int column) throws IllegalStateException{
+    public static List<String> getTableColumns (Row row, int column, String[] fieldsToUpload, ArrayList<Integer> fieldsNrToUpload) throws IllegalStateException{
 
         List<String> output = new ArrayList<String>();
+        String spaltenName = new String();
 
         //Create a loop to print cell values in a row
         int startCol = column;
@@ -177,18 +180,25 @@ public class ExcelParser {
             }
             switch (cellType) {
                 case BOOLEAN:
-                    output.add(String.valueOf(cell.getBooleanCellValue()));
+                    spaltenName = String.valueOf(cell.getBooleanCellValue());
                 case NUMERIC:
-                    output.add(String.valueOf(cell.getNumericCellValue()));
+                    spaltenName = String.valueOf(cell.getNumericCellValue());
                 case STRING:
-                    output.add(cell.getRichStringCellValue().getString());
+                    spaltenName = cell.getRichStringCellValue().getString();
             }
+
+            if (!istStringImArray(fieldsToUpload, spaltenName)) {
+               continue;
+            };
+
+            fieldsNrToUpload.add(c);
+            output.add(spaltenName);
         }
 
         return output;
     }
 
-    public static List<ExcelColumn> getRowColumns(Row row, int size) {
+    public static List<ExcelColumn> getRowColumns(Row row, int size, ArrayList<Integer> fieldsNrToUpload) {
 
         SimpleDateFormat sdf;
         sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss.SSSXXX");
@@ -198,6 +208,13 @@ public class ExcelParser {
 
         //Create a loop to print cell values in a row
         for (int c = 0; c < size; c++) {
+
+            // machen nur, wenn man Felder zur Upload ausgewahlt hat
+            if (fieldsNrToUpload.size() > 0 && fieldsNrToUpload != null) {
+                if (!fieldsNrToUpload.contains(Integer.valueOf(c))) {
+                    continue;
+                }
+            }
 
             //Print Excel data in console
             Cell cell = row.getCell(c);
@@ -250,5 +267,18 @@ public class ExcelParser {
         }
 
         return isEmpty;
+    }
+
+    // Methode zur Überprüfung, ob der String im Array ist
+    public static boolean istStringImArray(String[] array, String zuSuchenderString) {
+        if (array.length == 0 || array == null) {
+            return true;
+        }
+        for (String element : array) {
+            if (element.equals(zuSuchenderString)) {
+                return true; // Der String wurde im Array gefunden
+            }
+        }
+        return false; // Der String wurde im Array nicht gefunden
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ActionDataSheet {
     private String sheet;
     private ActionDataSheetStart start;
+    private String[] fieldsToUpload;
 
     public ActionDataSheet() {
     }
@@ -29,6 +30,14 @@ public class ActionDataSheet {
 
     public void setStart(ActionDataSheetStart start) {
         this.start = start;
+    }
+
+    public String[] getFieldsToUpload() {
+        return fieldsToUpload;
+    }
+
+    public void setFieldsToUpload(String[] fieldsToUpload) {
+        this.fieldsToUpload = fieldsToUpload;
     }
 
     @Override
